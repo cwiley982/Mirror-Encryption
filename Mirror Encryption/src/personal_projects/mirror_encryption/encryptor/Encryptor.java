@@ -8,14 +8,6 @@ import personal_projects.mirror_encryption.point.Point;
 public class Encryptor {
 
 	public static void main(String[] args) {
-
-		// for (int i = 0; i < 15; i++) { // prints reference array
-		// for (int j = 0; j < 15; j++) {
-		// System.out.print(array[i][j]);
-		// }
-		// System.out.println();
-		// }
-
 		System.out.println("Enter the mirrors (in a 13 x 13 grid) and phrase to encrypt");
 		Scanner input = new Scanner(System.in);
 		Encryptor encryptor = new Encryptor(input);
@@ -24,17 +16,17 @@ public class Encryptor {
 
 	}
 
+	private Point[][] grid;
 	private Cursor[] cursors;
 	private String wordToEncrypt;
 	private Scanner input;
-	private Point[][] grid;
 
 	public Encryptor(Scanner in) {
+		grid = new Point[15][15];
 		cursors = new Cursor[52]; // max possible cursors, one for each letter
 									// of each case
 		wordToEncrypt = "";
 		input = in;
-		grid = new Point[15][15];
 		setUpGridEdges();
 	}
 
@@ -50,6 +42,9 @@ public class Encryptor {
 			while (!cursors[i].finished()) { // not on a letter yet
 				cursors[i].move(); // move one in direction of cursor
 			}
+		}
+		for (int i = 0; i < cursors.length; i++) {
+			encryptedWord += grid[cursors[i].getRow()][cursors[i].getColumn()].getCharacter();
 		}
 		return encryptedWord;
 	}
@@ -101,15 +96,17 @@ public class Encryptor {
 	private void processInput() {
 		String line;
 		int lineCount = 0;
-		while (input.hasNextLine()) { // puts input into grid
+		while (lineCount < 14) { // puts input into grid
 			line = input.nextLine();
-			while (lineCount != 13) {
+			if (lineCount != 13) {
 				for (int i = 1; i < 14; i++) {
-					grid[lineCount][i] = new Point(lineCount, i, line.substring(i, i + 1));
+					grid[lineCount][i] = new Point(lineCount, i, line.substring(i));
 				}
-				lineCount++;
+			} else {
+				wordToEncrypt = line;
+				input.close();
 			}
-			wordToEncrypt = line;
+			lineCount++;
 		}
 	}
 

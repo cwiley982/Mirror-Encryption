@@ -12,15 +12,15 @@ public class Mirror {
 		this.col = column;
 	}
 
-	private String getDirection() {
+	public String getDirection() {
 		return direction;
 	}
 
-	private int getRow() {
+	public int getRow() {
 		return row;
 	}
 
-	private int getColumn() {
+	public int getColumn() {
 		return col;
 	}
 }

@@ -27,7 +27,7 @@ public class Point {
 		}
 	}
 
-	private boolean hasMirror() {
+	public boolean hasMirror() {
 		if (character.equals("/") || character.equals("\\")) {
 			return true;
 		} else {
@@ -35,7 +35,7 @@ public class Point {
 		}
 	}
 
-	private boolean isEdge() {
+	public boolean isEdge() {
 		if (row == 0 || col == 0 || row == 14 || col == 14) {
 			return true;
 		} else {
@@ -43,11 +43,11 @@ public class Point {
 		}
 	}
 
-	private String getCharacter() {
+	public String getCharacter() {
 		return character;
 	}
 
-	private Mirror getMirror() {
+	public Mirror getMirror() {
 		return mirror;
 	}
 
