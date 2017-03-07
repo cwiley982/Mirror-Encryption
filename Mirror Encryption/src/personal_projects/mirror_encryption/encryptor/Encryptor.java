@@ -2,7 +2,8 @@ package personal_projects.mirror_encryption.encryptor;
 
 import java.util.Scanner;
 
-import personal_projects.mirror_encryptor.mirror.Mirror;
+import personal_projects.mirror_encryption.cursor.Cursor;
+import personal_projects.mirror_encryption.point.Point;
 
 public class Encryptor {
 
@@ -23,85 +24,108 @@ public class Encryptor {
 
 	}
 
-	private String[][] encryptionTable;
-	private String[][] inputArray;
-	private Mirror[] mirrors;
+	private Cursor[] cursors;
 	private String wordToEncrypt;
 	private Scanner input;
+	private Point[][] grid;
 
 	public Encryptor(Scanner in) {
-		encryptionTable = new String[15][15];
-		inputArray = new String[14][13];
-		mirrors = new Mirror[169]; // max possible mirrors in a 13x13 array
+		cursors = new Cursor[52]; // max possible cursors, one for each letter
+									// of each case
 		wordToEncrypt = "";
 		input = in;
-		setUpEncryptionTable();
+		grid = new Point[15][15];
+		setUpGridEdges();
 	}
 
 	private String encrypt() {
 		processInput();
-		setUpMirrors();
-		getWordToEncrypt(inputArray[13]);
+		return getEncryptedWord();
+	}
+
+	private String getEncryptedWord() {
 		String encryptedWord = "";
+		setUpCursors();
+		for (int i = 0; i < cursors.length; i++) {
+			while (!cursors[i].finished()) { // not on a letter yet
+				cursors[i].move(); // move one in direction of cursor
+			}
+		}
 		return encryptedWord;
+	}
+
+	private void setUpCursors() {
+		int row;
+		int col;
+		for (int i = 0; i < wordToEncrypt.length(); i++) {
+			row = findRowIndex(wordToEncrypt.substring(i, i + 1));
+			col = findColumnIndex(wordToEncrypt.substring(i, i + 1));
+			cursors[i] = new Cursor(row, col, grid);
+		}
+	}
+
+	private int findColumnIndex(String letter) {
+		for (int i = 0; i < 15; i++) {
+			for (int j = 0; j < 15; j++) {
+				if (grid[0][j].getCharacter().equals(letter)) {
+					return j;
+				} else if (grid[14][j].getCharacter().equals(letter)) {
+					return j;
+				} else if (grid[i][0].getCharacter().equals(letter)) {
+					return 0;
+				} else if (grid[i][14].getCharacter().equals(letter)) {
+					return 14;
+				}
+			}
+		}
+		return -1;
+	}
+
+	private int findRowIndex(String letter) {
+		for (int i = 0; i < 15; i++) {
+			for (int j = 0; j < 15; j++) {
+				if (grid[0][j].getCharacter().equals(letter)) {
+					return 0;
+				} else if (grid[14][j].getCharacter().equals(letter)) {
+					return 14;
+				} else if (grid[i][0].getCharacter().equals(letter)) {
+					return i;
+				} else if (grid[i][14].getCharacter().equals(letter)) {
+					return i;
+				}
+			}
+		}
+		return -1;
 	}
 
 	private void processInput() {
 		String line;
-		String[] currentLine;
 		int lineCount = 0;
-		while (input.hasNextLine()) { // puts input into an array
+		while (input.hasNextLine()) { // puts input into grid
 			line = input.nextLine();
-			if (lineCount != 13) {
-				currentLine = new String[13];
-				for (int i = 0; i < 13; i++) {
-					currentLine[i] = line.substring(i, i + 1);
+			while (lineCount != 13) {
+				for (int i = 1; i < 14; i++) {
+					grid[lineCount][i] = new Point(lineCount, i, line.substring(i, i + 1));
 				}
-				inputArray[lineCount] = currentLine;
 				lineCount++;
-			} else {
-				currentLine = new String[13];
-				for (int i = 0; i < line.length(); i++) {
-					currentLine[i] = line.substring(i, i + 1);
-				}
 			}
+			wordToEncrypt = line;
 		}
 	}
 
-	private void getWordToEncrypt(String[] lastLine) {
-		for (int i = 0; i < lastLine.length; i++) {
-			wordToEncrypt += lastLine[i];
-		}
+	private String getWordToEncrypt() {
+		return wordToEncrypt;
 	}
 
-	private Mirror[] setUpMirrors() {
-		int k = 0;
-		for (int i = 0; i < 13; i++) {
-			for (int j = 0; j < 13; j++) {
-				if (inputArray[i][j].equals("\\")) {
-					mirrors[k] = new Mirror("NESW", i + 1, j + 1);
-					k++;
-				} else if (inputArray[i][j].equals("/")) {
-					mirrors[k] = new Mirror("NWSE", i + 1, j + 1);
-					k++;
-				}
-			}
-		}
 
-		return mirrors;
-	}
-
-	private void setUpEncryptionTable() {
+	private void setUpGridEdges() {
 		String[] firstRow = { " ", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", " " };
 		String[] lastRow = { " ", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", " " };
-		encryptionTable[0] = firstRow;
-		encryptionTable[14] = lastRow;
-		for (int i = 1; i < 14; i++) {
-			encryptionTable[i][0] = firstRow[i].toUpperCase();
-			encryptionTable[i][14] = lastRow[i].toLowerCase();
-			for (int j = 1; j < 14; j++) {
-				encryptionTable[i][j] = " ";
-			}
+		for (int i = 0; i < 15; i++) {
+			grid[0][i] = new Point(0, i, firstRow[i]);
+			grid[14][i] = new Point(14, i, lastRow[i]);
+			grid[i][0] = new Point(i, 0, firstRow[i].toUpperCase());
+			grid[i][14] = new Point(i, 14, lastRow[i].toLowerCase());
 		}
 	}
 
