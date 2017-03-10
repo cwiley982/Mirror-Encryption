@@ -20,19 +20,24 @@ public class Point {
 	}
 
 	private void setUpMirror() {
-		if (getCharacter().equals("\\")) {
+		// if (getCharacter().equals("\\")) { //ascii 92
+		// mirror = new Mirror("NESW", row, col);
+		// } else if (getCharacter().equals("/")) { // ascii 47
+		// mirror = new Mirror("NWSE", row, col);
+		// }
+		char character = getCharacter().charAt(0);
+		if (character == 92) { // back slash
 			mirror = new Mirror("NESW", row, col);
-		} else if (getCharacter().equals("/")) {
+		} else if (character == 47) { // forward slash
 			mirror = new Mirror("NWSE", row, col);
 		}
 	}
 
 	public boolean hasMirror() {
-		if (character.equals("/") || character.equals("\\")) {
+		if (mirror != null) {
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 
 	public boolean isEdge() {

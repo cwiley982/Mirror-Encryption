@@ -8,17 +8,28 @@ public class Cursor {
 	private int currentRow;
 	private int currentCol;
 	private boolean finished;
+	// private boolean isWhiteSpace;
 	private Point[][] grid;
 
 	public Cursor(int row, int col, Point[][] grid) {
 		setRow(row);
 		setColumn(col);
 		this.grid = grid;
-		setDirection();
+		// checkForSpace();
+		setInitialDirection();
 		finished = false;
 	}
 
-	private void setDirection() {
+	// private void checkForSpace() {
+	// if (grid[currentRow][currentCol].getCharacter().equals(" ")) {
+	// isWhiteSpace = true;
+	// } else {
+	// isWhiteSpace = false;
+	// }
+	//
+	// }
+
+	private void setInitialDirection() {
 		if (currentRow == 0) {
 			currentDirection = "down";
 		} else if (currentRow == 14) {
@@ -45,10 +56,14 @@ public class Cursor {
 	public int getColumn() {
 		return currentCol;
 	}
+
 	public String getDirection() {
 		return currentDirection;
 	}
 
+	public String getCharacter() {
+		return grid[currentRow][currentCol].getCharacter();
+	}
 	private void changeDirection(String newDirection) {
 		currentDirection = newDirection;
 	}
@@ -58,21 +73,24 @@ public class Cursor {
 	}
 
 	public void move() {
-		if (currentDirection.equals("up")) { // move 1
-			setRow(currentRow--);
-		} else if (currentDirection.equals("down")) {
-			setRow(currentRow++);
-		} else if (currentDirection.equals("left")) {
-			setColumn(currentCol--);
-		} else if (currentDirection.equals("right")) {
-			setColumn(currentCol++);
+		// if (isWhiteSpace) {
+		// finished = true;
+		// }
+		if (getDirection().equals("up")) { // move 1
+			setRow(currentRow - 1);
+		} else if (getDirection().equals("down")) {
+			setRow(currentRow + 1);
+		} else if (getDirection().equals("left")) {
+			setColumn(currentCol - 1);
+		} else if (getDirection().equals("right")) {
+			setColumn(currentCol + 1);
 		}
 		if (currentRow == 0 || currentCol == 0 || currentRow == 14 || currentCol == 14) {
 			finished = true;
 		}
-		if (grid[currentCol][currentCol].hasMirror()) {
+		if (grid[currentRow][currentCol].hasMirror()) {
 			boolean forwardSlash = false;
-			if (grid[currentCol][currentRow].getMirror().getDirection().equals("NWSE")) {
+			if (grid[currentRow][currentCol].getMirror().getDirection().equals("NWSE")) {
 				forwardSlash = true;
 			}
 			if (currentDirection.equals("up")) {

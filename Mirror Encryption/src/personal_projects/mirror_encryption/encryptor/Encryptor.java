@@ -8,9 +8,10 @@ import personal_projects.mirror_encryption.point.Point;
 public class Encryptor {
 
 	public static void main(String[] args) {
-		System.out.println("Enter the mirrors (in a 13 x 13 grid) and phrase to encrypt");
+		System.out.println("Enter the mirrors (in a 13 x 13 grid) and phrase to encrypt:");
 		Scanner input = new Scanner(System.in);
 		Encryptor encryptor = new Encryptor(input);
+		// encryptor.printGrid();
 
 		System.out.println(encryptor.encrypt());
 
@@ -38,13 +39,13 @@ public class Encryptor {
 	private String getEncryptedWord() {
 		String encryptedWord = "";
 		setUpCursors();
-		for (int i = 0; i < cursors.length; i++) {
+		for (int i = 0; i < wordToEncrypt.length(); i++) {
 			while (!cursors[i].finished()) { // not on a letter yet
 				cursors[i].move(); // move one in direction of cursor
 			}
 		}
-		for (int i = 0; i < cursors.length; i++) {
-			encryptedWord += grid[cursors[i].getRow()][cursors[i].getColumn()].getCharacter();
+		for (int i = 0; i < wordToEncrypt.length(); i++) {
+			encryptedWord += cursors[i].getCharacter();
 		}
 		return encryptedWord;
 	}
@@ -53,54 +54,60 @@ public class Encryptor {
 		int row;
 		int col;
 		for (int i = 0; i < wordToEncrypt.length(); i++) {
-			row = findRowIndex(wordToEncrypt.substring(i, i + 1));
-			col = findColumnIndex(wordToEncrypt.substring(i, i + 1));
-			cursors[i] = new Cursor(row, col, grid);
+			if (i < wordToEncrypt.length() - 1) {
+				row = findRowIndex(wordToEncrypt.substring(i, i + 1));
+				col = findColumnIndex(wordToEncrypt.substring(i, i + 1));
+				cursors[i] = new Cursor(row, col, grid);
+			} else {
+				row = findRowIndex(wordToEncrypt.substring(i));
+				col = findColumnIndex(wordToEncrypt.substring(i));
+				cursors[i] = new Cursor(row, col, grid);
+			}
 		}
 	}
 
 	private int findColumnIndex(String letter) {
-		for (int i = 0; i < 15; i++) {
-			for (int j = 0; j < 15; j++) {
-				if (grid[0][j].getCharacter().equals(letter)) {
-					return j;
-				} else if (grid[14][j].getCharacter().equals(letter)) {
-					return j;
-				} else if (grid[i][0].getCharacter().equals(letter)) {
-					return 0;
-				} else if (grid[i][14].getCharacter().equals(letter)) {
-					return 14;
-				}
+		for (int count = 0; count < 15; count++) {
+			if (grid[0][count].getCharacter().equals(letter)) {
+				return count;
+			} else if (grid[14][count].getCharacter().equals(letter)) {
+				return count;
+			} else if (grid[count][0].getCharacter().equals(letter)) {
+				return 0;
+			} else if (grid[count][14].getCharacter().equals(letter)) {
+				return 14;
 			}
 		}
 		return -1;
 	}
 
 	private int findRowIndex(String letter) {
-		for (int i = 0; i < 15; i++) {
-			for (int j = 0; j < 15; j++) {
-				if (grid[0][j].getCharacter().equals(letter)) {
-					return 0;
-				} else if (grid[14][j].getCharacter().equals(letter)) {
-					return 14;
-				} else if (grid[i][0].getCharacter().equals(letter)) {
-					return i;
-				} else if (grid[i][14].getCharacter().equals(letter)) {
-					return i;
-				}
+		for (int count = 0; count < 15; count++) {
+			if (grid[0][count].getCharacter().equals(letter)) {
+				return 0;
+			} else if (grid[14][count].getCharacter().equals(letter)) {
+				return 14;
+			} else if (grid[count][0].getCharacter().equals(letter)) {
+				return count;
+			} else if (grid[count][14].getCharacter().equals(letter)) {
+				return count;
 			}
 		}
 		return -1;
 	}
 
-	private void processInput() {
+	public void processInput() {
 		String line;
 		int lineCount = 0;
 		while (lineCount < 14) { // puts input into grid
 			line = input.nextLine();
 			if (lineCount != 13) {
-				for (int i = 1; i < 14; i++) {
-					grid[lineCount][i] = new Point(lineCount, i, line.substring(i));
+				for (int i = 0; i < 13; i++) {
+					if (i < 12) {
+						grid[lineCount + 1][i + 1] = new Point(lineCount + 1, i + 1, line.substring(i, i + 1));
+					} else {
+						grid[lineCount + 1][i + 1] = new Point(lineCount + 1, i + 1, line.substring(i));
+					}
 				}
 			} else {
 				wordToEncrypt = line;
@@ -108,10 +115,6 @@ public class Encryptor {
 			}
 			lineCount++;
 		}
-	}
-
-	private String getWordToEncrypt() {
-		return wordToEncrypt;
 	}
 
 
@@ -123,6 +126,16 @@ public class Encryptor {
 			grid[14][i] = new Point(14, i, lastRow[i]);
 			grid[i][0] = new Point(i, 0, firstRow[i].toUpperCase());
 			grid[i][14] = new Point(i, 14, lastRow[i].toLowerCase());
+		}
+	}
+
+	public void printGrid() {
+		System.out.println();
+		for (int i = 0; i < 15; i++) {
+			for (int j = 0; j < 15; j++) {
+				System.out.print(grid[i][j].getCharacter());
+			}
+			System.out.println();
 		}
 	}
 
