@@ -8,26 +8,25 @@ public class Cursor {
 	private int currentRow;
 	private int currentCol;
 	private boolean finished;
-	// private boolean isWhiteSpace;
+	private boolean isWhiteSpace;
 	private Point[][] grid;
 
 	public Cursor(int row, int col, Point[][] grid) {
 		setRow(row);
 		setColumn(col);
 		this.grid = grid;
-		// checkForSpace();
+		checkForSpace();
 		setInitialDirection();
 		finished = false;
 	}
 
-	// private void checkForSpace() {
-	// if (grid[currentRow][currentCol].getCharacter().equals(" ")) {
-	// isWhiteSpace = true;
-	// } else {
-	// isWhiteSpace = false;
-	// }
-	//
-	// }
+	private void checkForSpace() {
+		if (grid[currentRow][currentCol].getCharacter().equals(" ")) {
+			isWhiteSpace = true;
+		} else {
+			isWhiteSpace = false;
+		}
+	}
 
 	private void setInitialDirection() {
 		if (currentRow == 0) {
@@ -73,10 +72,9 @@ public class Cursor {
 	}
 
 	public void move() {
-		// if (isWhiteSpace) {
-		// finished = true;
-		// }
-		if (getDirection().equals("up")) { // move 1
+		if (isWhiteSpace) {
+			finished = true;
+		} else if (getDirection().equals("up")) { // move 1
 			setRow(currentRow - 1);
 		} else if (getDirection().equals("down")) {
 			setRow(currentRow + 1);
