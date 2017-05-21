@@ -12,15 +12,13 @@ public class Encryptor {
 	private Point[][] grid;
 	private Cursor[] cursors;
 	private String wordToEncrypt;
-	private static Scanner input;
 	private static Scanner fileScan;
-	private static String filename;
 
 	public static void main(String[] args) {
 		System.out.println("Enter the name of the file containing the mirrors and word you want to encrypt: ");
 		Scanner input = new Scanner(System.in);
 		try {
-			filename = input.nextLine();
+			String filename = input.nextLine();
 			input.close();
 			fileScan = new Scanner(new File(filename));
 		} catch (FileNotFoundException e) {
