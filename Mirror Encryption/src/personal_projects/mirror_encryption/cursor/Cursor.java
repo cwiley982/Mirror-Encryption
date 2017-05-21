@@ -88,7 +88,7 @@ public class Cursor {
 		}
 		if (grid[currentRow][currentCol].hasMirror()) {
 			boolean forwardSlash = false;
-			if (grid[currentRow][currentCol].getMirror().getDirection().equals("NWSE")) {
+			if (grid[currentRow][currentCol].getMirror().getDirection().equals("forward")) {
 				forwardSlash = true;
 			}
 			if (currentDirection.equals("up")) {
@@ -105,15 +105,15 @@ public class Cursor {
 				}
 			} else if (currentDirection.equals("left")) {
 				if (forwardSlash) {
-					changeDirection("up");
-				} else {
 					changeDirection("down");
+				} else {
+					changeDirection("up");
 				}
 			} else if (currentDirection.equals("right")) {
 				if (forwardSlash) {
-					changeDirection("down");
-				} else {
 					changeDirection("up");
+				} else {
+					changeDirection("down");
 				}
 			}
 

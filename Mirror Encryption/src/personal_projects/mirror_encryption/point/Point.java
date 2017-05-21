@@ -14,22 +14,17 @@ public class Point {
 		this.col = col;
 		this.character = character;
 		mirror = null;
-		if (hasMirror()) {
+		if (isMirror()) {
 			setUpMirror();
 		}
 	}
 
 	private void setUpMirror() {
-		// if (getCharacter().equals("\\")) { //ascii 92
-		// mirror = new Mirror("NESW", row, col);
-		// } else if (getCharacter().equals("/")) { // ascii 47
-		// mirror = new Mirror("NWSE", row, col);
-		// }
 		char character = getCharacter().charAt(0);
 		if (character == 92) { // back slash
-			mirror = new Mirror("NESW", row, col);
+			mirror = new Mirror("back", row, col);
 		} else if (character == 47) { // forward slash
-			mirror = new Mirror("NWSE", row, col);
+			mirror = new Mirror("forward", row, col);
 		}
 	}
 
@@ -54,6 +49,20 @@ public class Point {
 
 	public Mirror getMirror() {
 		return mirror;
+	}
+
+	public boolean isMirror() {
+		if (row != 0 && row != 14 && col != 0 && col != 14) {
+			if (character.charAt(0) == 92 || character.charAt(0) == 47) {
+				return true;
+			} else if (Character.isWhitespace(character.charAt(0))) {
+				return false;
+			} else {
+				throw new IllegalArgumentException("Invalid mirror setup - must only use spaces and slashes");
+			}
+		} else {
+			return false;
+		}
 	}
 
 }

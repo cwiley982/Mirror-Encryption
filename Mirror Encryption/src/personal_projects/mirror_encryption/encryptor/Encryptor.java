@@ -1,5 +1,7 @@
 package personal_projects.mirror_encryption.encryptor;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 import personal_projects.mirror_encryption.cursor.Cursor;
@@ -7,32 +9,41 @@ import personal_projects.mirror_encryption.point.Point;
 
 public class Encryptor {
 
+	private Point[][] grid;
+	private Cursor[] cursors;
+	private String wordToEncrypt;
+	private static Scanner input;
+	private static Scanner fileScan;
+	private static String filename;
+
 	public static void main(String[] args) {
-		System.out.println("Enter the mirrors (in a 13 x 13 grid) and phrase to encrypt:");
+		System.out.println("Enter the name of the file containing the mirrors and word you want to encrypt: ");
 		Scanner input = new Scanner(System.in);
-		Encryptor encryptor = new Encryptor(input);
+		try {
+			filename = input.nextLine();
+			input.close();
+			fileScan = new Scanner(new File(filename));
+		} catch (FileNotFoundException e) {
+			System.out.println("Invalid file");
+		}
+		Encryptor encryptor = new Encryptor();
 		// encryptor.printGrid();
 
 		System.out.println(encryptor.encrypt());
 
 	}
 
-	private Point[][] grid;
-	private Cursor[] cursors;
-	private String wordToEncrypt;
-	private Scanner input;
-
-	public Encryptor(Scanner in) {
+	public Encryptor() {
 		grid = new Point[15][15];
 		cursors = new Cursor[52]; // max possible cursors, one for each letter
 									// of each case
 		wordToEncrypt = "";
-		input = in;
 		setUpGridEdges();
 	}
 
 	private String encrypt() {
 		processInput();
+		// printGrid();
 		return getEncryptedWord();
 	}
 
@@ -100,7 +111,7 @@ public class Encryptor {
 		String line;
 		int lineCount = 0;
 		while (lineCount < 14) { // puts input into grid
-			line = input.nextLine();
+			line = fileScan.nextLine();
 			if (lineCount != 13) {
 				for (int i = 0; i < 13; i++) {
 					if (i < 12) {
@@ -111,7 +122,7 @@ public class Encryptor {
 				}
 			} else {
 				wordToEncrypt = line;
-				input.close();
+				fileScan.close();
 			}
 			lineCount++;
 		}
